@@ -28,7 +28,7 @@ bat = {
 	"y": HEIGHT/2,
 	"width": 10, # actually, half the width and height
 	"height": 50,
-	"color": (0xFF, 0xFF, 0xFF),
+	"color": white,
 	"speed": 3
 }
 
