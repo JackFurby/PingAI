@@ -16,20 +16,20 @@ for _ in range(20):
 	ball = {
 		"x": random.randrange(0, WIDTH),
 		"y": random.randrange(0, HEIGHT),
-		"xvel": random.randrange(-10, 10),
-		"yvel": random.randrange(-10, 10),
+		"xvel": 10 * (random.randrange(0, 2)-0.5),
+		"yvel": 10 * (random.randrange(0, 2)-0.5),
 		"r": 10,
 		"color": (random.randrange(0, 0xFF), random.randrange(0, 0xFF), random.randrange(0, 0xFF))
 	}
 	balls.append(ball)
 
 bat = {
-	"x": 30,
+	"x": 40,
 	"y": HEIGHT/2,
 	"width": 10, # actually, half the width and height
 	"height": 50,
 	"color": white,
-	"speed": 3
+	"speed": 8
 }
 
 def update():
@@ -39,6 +39,7 @@ def update():
 	if keys[K_UP] and bat["y"] > bat["height"]:
 		bat["y"] -= bat["speed"]
 	
+	deleted  = []
 	for ball in balls:
 		ball["x"] += ball["xvel"]
 		ball["y"] += ball["yvel"]
@@ -52,7 +53,13 @@ def update():
 			ball["xvel"] *= -1
 		if (ball["yvel"] > 0 and ball["y"] + ball["r"] > HEIGHT) or (ball["yvel"] < 0 and ball["y"] - ball["r"] < 0):
 			ball["yvel"] *= -1
-
+		
+		if ball["x"] - ball["r"] < 0:
+			deleted.append(ball)
+	
+	for ball in deleted:
+		balls.remove(ball)
+	
 def render():
 	screen.fill((0, 0, 0)) # clear the screen with black
 	pygame.draw.rect(screen, bat["color"], (bat["x"]-bat["width"], bat["y"]-bat["height"], bat["width"]*2, bat["height"]*2), 0)
