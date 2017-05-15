@@ -11,16 +11,6 @@ clock = pygame.time.Clock()
 white = 255, 255, 255
 
 balls = []
-paddle1 = []
-
-paddle1 = {
-	"y": HEIGHT/2,
-	"x": 30,
-	"width": 10,
-	"height": 50,
-	"color": white,
-	"speed": 3
-}
 
 for _ in range(2):
 	ball = {
@@ -33,6 +23,15 @@ for _ in range(2):
 	}
 	balls.append(ball)
 
+bat = {
+	"x": 30,
+	"y": HEIGHT/2,
+	"width": 10, # actually, half the width and height
+	"height": 50,
+	"color": (0xFF, 0xFF, 0xFF),
+	"speed": 3
+}
+
 while True:
 	for event in pygame.event.get():
 		if event.type == QUIT:
@@ -44,18 +43,24 @@ while True:
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
 		ball["x"] += ball["xvel"]
 		ball["y"] += ball["yvel"]
+		
+		# wall collision
 		if (ball["xvel"] > 0 and ball["x"] + ball["r"] > WIDTH) or (ball["xvel"] < 0 and ball["x"] - ball["r"] < 0):
 			ball["xvel"] *= -1
 		if (ball["yvel"] > 0 and ball["y"] + ball["r"] > HEIGHT) or (ball["yvel"] < 0 and ball["y"] - ball["r"] < 0):
 			ball["yvel"] *= -1
-
-	pygame.draw.rect(screen, paddle1["color"], (paddle1["x"]-paddle1["width"], paddle1["y"]-paddle1["height"], paddle1["width"]*2, paddle1["height"]*2), 0)
-
+		
+		# bat collision
+		if (abs(ball["y"] - bat["y"]) < (bat["height"] + ball["r"])) and ((ball["xvel"] > 0 and ball["x"] > WIDTH/2 and ball["x"] + ball["r"] > bat["x"] - bat["width"]) or (ball["xvel"] < 0 and ball["x"] < WIDTH/2 and ball["x"] - ball["r"] < bat["x"] + bat["width"])):
+			ball["xvel"] *= -1
+	
 	keys = pygame.key.get_pressed()
-	if keys[K_DOWN]:
-		paddle1["y"]+=paddle1["speed"]
-	if keys[K_UP]:
-		paddle1["y"]-=paddle1["speed"]	
-
+	if keys[K_DOWN] and bat["y"] < HEIGHT - bat["height"]:
+		bat["y"] += bat["speed"]
+	if keys[K_UP] and bat["y"] > bat["height"]:
+		bat["y"] -= bat["speed"]
+	
+	pygame.draw.rect(screen, bat["color"], (bat["x"]-bat["width"], bat["y"]-bat["height"], bat["width"]*2, bat["height"]*2), 0)
+	
 	pygame.display.update()
 	clock.tick(60)
