@@ -15,12 +15,20 @@ for _ in range(500):
 	ball = {
 		"x": random.randrange(0, WIDTH),
 		"y": random.randrange(0, HEIGHT),
-		"xvel": random.randrange(-10, 10),
-		"yvel": random.randrange(-10, 10),
+		"xvel": random.randrange(-4, 4),
+		"yvel": random.randrange(-4, 4),
 		"r": 10,
 		"color": (random.randrange(0, 0xFF), random.randrange(0, 0xFF), random.randrange(0, 0xFF))
 	}
 	balls.append(ball)
+
+bat = {
+	"x": 30,
+	"y": HEIGHT/2,
+	"width": 10, # actually, half the width and height
+	"height": 50,
+	"color": (0xFF, 0xFF, 0xFF)
+}
 
 while True:
 	for event in pygame.event.get():
@@ -37,6 +45,8 @@ while True:
 			ball["xvel"] *= -1
 		if (ball["yvel"] > 0 and ball["y"] + ball["r"] > HEIGHT) or (ball["yvel"] < 0 and ball["y"] - ball["r"] < 0):
 			ball["yvel"] *= -1
+	
+	pygame.draw.rect(screen, bat["color"], (bat["x"]-bat["width"], bat["y"]-bat["height"], bat["width"]*2, bat["height"]*2), 0)
 	
 	pygame.display.update()
 	clock.tick(60)
