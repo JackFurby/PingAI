@@ -16,8 +16,8 @@ s.listen(1)
 ball = {
 	"x": WIDTH/2,
 	"y": HEIGHT/2,
-	"xvel": 10 * (random.randrange(0, 2)-0.5),
-	"yvel": 10 * (random.randrange(0, 2)-0.5),
+	"xvel": 6 * (random.randrange(0, 2)-0.5),
+	"yvel": 6 * (random.randrange(0, 2)-0.5),
 	"r": 10, #radius of ball
 	"color": (random.randrange(0, 0xFF), random.randrange(0, 0xFF), random.randrange(0, 0xFF))
 }
@@ -36,24 +36,23 @@ bat_r = bat_l.copy()
 bat_r["x"] = WIDTH - bat_r["x"]
 
 bat_l["conn"], bat_l["addr"] = s.accept()
+bat_l["conn"].setblocking(False)
 print("Left player connected from {}".format(bat_l["addr"]))
 
 bat_r["conn"], bat_r["addr"] = s.accept()
+bat_r["conn"].setblocking(False)
 print("Right player connected from {}".format(bat_r["addr"]))
 
-s.setblocking(False)
-
 def update():
-	
 	try:
 		while True:
-			bat_l["input"] = bat_l["conn"].recv(1).decode()[-1]
+			bat_l["input"] = bat_l["conn"].recv(1).decode()
 	except:
 		pass
 	
 	try:
 		while True:
-			bat_r["input"] = bat_r["conn"].recv(1).decode()[-1]
+			bat_r["input"] = bat_r["conn"].recv(1).decode()
 	except:
 		pass
 	
