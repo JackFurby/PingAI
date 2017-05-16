@@ -4,11 +4,13 @@ import random
 
 WIDTH = 640
 HEIGHT = 480
+pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 pygame.display.set_caption("PongAI")
 clock = pygame.time.Clock()
 white = 255, 255, 255
+myfont = pygame.font.SysFont("monospace", 15)
 
 balls = []
 
@@ -89,6 +91,11 @@ def render():
 
 	for ball in balls:
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
+
+	score = myfont.render("Some text", 1, white)
+	screen.blit(score, (320, 240))
+	640
+480
 
 	pygame.display.update()
 
