@@ -29,7 +29,7 @@ bat_l = {
 	"x": 5,
 	"y": HEIGHT/2,
 	"width": 5, # actually, half the width and height
-	"height": 50,
+	"height": 20,
 	"color": white,
 	"speed": 8,
 	"score": 0
