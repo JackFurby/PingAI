@@ -92,8 +92,13 @@ last_time = time.time()
 while True:
 	update()
 	
-	state = json.dumps([bat_l, bat_r, ball])
+	state = [bat_l.copy(), bat_r.copy(), ball]
+	del state[0]["conn"]
+	del state[1]["conn"]
+	state = json.dumps(state).encode()
 	print(state)
+	bat_l["conn"].send(state)
+	bat_r["conn"].send(state)
 	
 	current_time = time.time()
 	delay = (1 / 60) - (current_time - last_time)
