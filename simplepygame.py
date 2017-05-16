@@ -14,8 +14,8 @@ balls = []
 
 for _ in range(1):
 	ball = {
-		"x": random.randrange(0, WIDTH),
-		"y": random.randrange(0, HEIGHT),
+		"x": WIDTH/2,
+		"y": HEIGHT/2,
 		"xvel": 10 * (random.randrange(0, 2)-0.5),
 		"yvel": 10 * (random.randrange(0, 2)-0.5),
 		"r": 10, #radius of ball
@@ -67,6 +67,7 @@ def update():
 				ball["xvel"] *= -1
 			else: # don't bounce
 				deleted.append(ball)
+				bat_r["score"] += 1
 		elif x2 > WIDTH:
 			yint = (ball["yvel"]/-ball["xvel"]) * (WIDTH - ball["x"]) + ball["y"]
 			if bat_r["y"] - bat_r["height"] < yint < bat_r["y"] + bat_r["height"]: # bounce
@@ -74,6 +75,7 @@ def update():
 				ball["xvel"] *= -1
 			else: # don't bounce
 				deleted.append(ball)
+				bat_l["score"] += 1
 		if y2 < 0 or y2 > HEIGHT:
 			ball["yvel"] *= -1
 		
@@ -81,7 +83,10 @@ def update():
 		ball["y"] = y2
 
 	for ball in deleted:
-		balls.remove(ball)
+		ball["x"] = WIDTH/2
+		ball["y"] = HEIGHT/2
+		ball["xvel"] = 10 * (random.randrange(0, 2)-0.5)
+		ball["yvel"] = 10 * (random.randrange(0, 2)-0.5)
 
 def render():
 	screen.fill((0, 0, 0)) # clear the screen with black
