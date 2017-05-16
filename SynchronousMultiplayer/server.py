@@ -1,8 +1,17 @@
 import random
 import time
+import socket
+import json
 
 WIDTH = 640
 HEIGHT = 480
+
+TCP_IP = "0.0.0.0"
+TCP_PORT = 1337
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((TCP_IP, TCP_PORT))
+s.listen(1)
 
 ball = {
 	"x": WIDTH/2,
@@ -25,6 +34,12 @@ bat_l = {
 bat_r = bat_l.copy()
 bat_r["x"] = WIDTH - bat_r["x"]
 
+bat_l["conn"], bat_l["addr"] = s.accept()
+print("Left player connected from {}".format(bat_l["addr"]))
+
+bat_r["conn"], bat_r["addr"] = s.accept()
+print("Right player connected from {}".format(bat_r["addr"]))
+
 def update():
 	
 	#if keys[K_s] and bat_l["y"] < HEIGHT - bat_l["height"]:
@@ -36,7 +51,6 @@ def update():
 	#	bat_r["y"] += bat_r["speed"]
 	#if keys[K_UP] and bat_r["y"] > bat_r["height"]:
 	#	bat_r["y"] -= bat_r["speed"]
-		
 
 	# wall collision
 	x2 = ball["x"] + ball["xvel"]
@@ -77,7 +91,10 @@ last_time = time.time()
 
 while True:
 	update()
-
+	
+	state = json.dumps([bat_l, bat_r, ball])
+	print(state)
+	
 	current_time = time.time()
 	delay = (1 / 60) - (current_time - last_time)
 	last_time = current_time
