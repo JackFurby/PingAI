@@ -39,15 +39,12 @@ def update():
 
 
 	state = sfile.readline()
-	print(state)
 	bat_l, bat_r, ball = json.loads(state) 
-	print(bat_l)
 
 	return bat_l, bat_r, ball
 	
 
 def render(bat_l, bat_r, ball):
-	print(bat_l)
 	screen.fill((0, 0, 0)) # clear the screen with black
 	pygame.draw.rect(screen, white, (bat_l["x"]-bat_l["width"], bat_l["y"]-bat_l["height"], bat_l["width"]*2, bat_l["height"]*2), 0)
 	pygame.draw.rect(screen, white, (bat_r["x"]-bat_r["width"], bat_r["y"]-bat_r["height"], bat_r["width"]*2, bat_r["height"]*2), 0)

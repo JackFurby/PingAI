@@ -98,8 +98,8 @@ def update():
 		print("SCORE: {}/{}".format(bat_l["score"], bat_r["score"]))
 		ball["x"] = WIDTH/2
 		ball["y"] = HEIGHT/2
-		ball["xvel"] = 10 * (random.randrange(0, 2)-0.5)
-		ball["yvel"] = 10 * (random.randrange(0, 2)-0.5)
+		#ball["xvel"] = 6 * (random.randrange(0, 2)-0.5)
+		#ball["yvel"] = 6 * (random.randrange(0, 2)-0.5)
 
 last_time = time.time()
 
@@ -113,7 +113,6 @@ while True:
 	del state[0]["conn"]
 	del state[1]["conn"]
 	state = ( json.dumps(state) + "\n" ).encode()
-	print(state)
 	bat_l["conn"].send(state)
 	bat_r["conn"].send(state)
 	
