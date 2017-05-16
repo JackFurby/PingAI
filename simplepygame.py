@@ -9,7 +9,7 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 pygame.display.set_caption("PongAI")
 clock = pygame.time.Clock()
-white = 255, 255, 255
+white = (255, 255, 255)
 myfont = pygame.font.SysFont("monospace", 32)
 
 balls = []
