@@ -93,8 +93,8 @@ def render():
 	for ball in balls:
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
 
-	score = myfont.render("Some text", 1, white)
-	screen.blit(score, (240, 320))
+	score = myfont.render("{} : {}".format(bat_l["score"], bat_r["score"]) , 1, white)
+	screen.blit(score, (280, 240))
 	
 
 	pygame.display.update()
