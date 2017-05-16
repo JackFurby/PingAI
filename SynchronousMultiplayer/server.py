@@ -28,7 +28,8 @@ bat_l = {
 	"width": 5, # actually, half the width and height
 	"height": 40,
 	"speed": 8,
-	"score": 0
+	"score": 0,
+	"input": " ",
 }
 
 bat_r = bat_l.copy()
@@ -40,17 +41,31 @@ print("Left player connected from {}".format(bat_l["addr"]))
 bat_r["conn"], bat_r["addr"] = s.accept()
 print("Right player connected from {}".format(bat_r["addr"]))
 
+s.setblocking(False)
+
 def update():
 	
-	#if keys[K_s] and bat_l["y"] < HEIGHT - bat_l["height"]:
-	#	bat_l["y"] += bat_l["speed"]
-	#if keys[K_w] and bat_l["y"] > bat_l["height"]:
-	#	bat_l["y"] -= bat_l["speed"]
+	try:
+		while True:
+			bat_l["input"] = bat_l["conn"].recv(1).decode()[-1]
+	except:
+		pass
+	
+	try:
+		while True:
+			bat_r["input"] = bat_r["conn"].recv(1).decode()[-1]
+	except:
+		pass
+	
+	if bat_l["input"] == "D" and bat_l["y"] < HEIGHT - bat_l["height"]:
+		bat_l["y"] += bat_l["speed"]
+	if bat_l["input"] == "U" and bat_l["y"] > bat_l["height"]:
+		bat_l["y"] -= bat_l["speed"]
 
-	#if keys[K_DOWN] and bat_r["y"] < HEIGHT - bat_r["height"]:
-	#	bat_r["y"] += bat_r["speed"]
-	#if keys[K_UP] and bat_r["y"] > bat_r["height"]:
-	#	bat_r["y"] -= bat_r["speed"]
+	if bat_r["input"] == "D" and bat_r["y"] < HEIGHT - bat_r["height"]:
+		bat_r["y"] += bat_r["speed"]
+	if bat_r["input"] == "U" and bat_r["y"] > bat_r["height"]:
+		bat_r["y"] -= bat_r["speed"]
 
 	# wall collision
 	x2 = ball["x"] + ball["xvel"]
