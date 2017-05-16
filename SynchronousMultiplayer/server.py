@@ -26,7 +26,7 @@ bat_l = {
 	"x": 5,
 	"y": HEIGHT/2,
 	"width": 5, # actually, half the width and height
-	"height": 20,
+	"height": 40,
 	"speed": 8,
 	"score": 0
 }
@@ -92,10 +92,13 @@ last_time = time.time()
 while True:
 	update()
 	
+	if bat_l["score"] >= 5 or bat_r["score"] >= 5:
+		break
+	
 	state = [bat_l.copy(), bat_r.copy(), ball]
 	del state[0]["conn"]
 	del state[1]["conn"]
-	state = json.dumps(state).encode()
+	state = ( json.dumps(state) + "\n" ).encode()
 	print(state)
 	bat_l["conn"].send(state)
 	bat_r["conn"].send(state)
@@ -105,3 +108,6 @@ while True:
 	last_time = current_time
 	if delay > 0:
 		time.sleep(delay)
+
+bat_l["conn"].close()
+bat_l["conn"].close()
