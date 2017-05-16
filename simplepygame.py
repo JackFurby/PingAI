@@ -14,7 +14,7 @@ myfont = pygame.font.SysFont("monospace", 15)
 
 balls = []
 
-for _ in range(20):
+for _ in range(1):
 	ball = {
 		"x": random.randrange(0, WIDTH),
 		"y": random.randrange(0, HEIGHT),
@@ -31,7 +31,8 @@ bat_l = {
 	"width": 5, # actually, half the width and height
 	"height": 50,
 	"color": white,
-	"speed": 8
+	"speed": 8,
+	"score": 0
 }
 
 bat_r = bat_l.copy()
