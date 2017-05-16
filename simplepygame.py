@@ -23,47 +23,69 @@ for _ in range(20):
 	}
 	balls.append(ball)
 
-bat = {
-	"x": 40,
+bat_l = {
+	"x": 5,
 	"y": HEIGHT/2,
-	"width": 10, # actually, half the width and height
+	"width": 5, # actually, half the width and height
 	"height": 50,
 	"color": white,
 	"speed": 8
 }
 
+bat_r = bat_l.copy()
+bat_r["x"] = WIDTH - bat_r["x"]
+
 
 def update():
 	keys = pygame.key.get_pressed()
-	if keys[K_DOWN] and bat["y"] < HEIGHT - bat["height"]:
-		bat["y"] += bat["speed"]
-	if keys[K_UP] and bat["y"] > bat["height"]:
-		bat["y"] -= bat["speed"]
+	
+	if keys[K_s] and bat_l["y"] < HEIGHT - bat_l["height"]:
+		bat_l["y"] += bat_l["speed"]
+	if keys[K_w] and bat_l["y"] > bat_l["height"]:
+		bat_l["y"] -= bat_l["speed"]
 
+	if keys[K_DOWN] and bat_r["y"] < HEIGHT - bat_r["height"]:
+		bat_r["y"] += bat_r["speed"]
+	if keys[K_UP] and bat_r["y"] > bat_r["height"]:
+		bat_r["y"] -= bat_r["speed"]
 	deleted  = []
 	for ball in balls:
-		ball["x"] += ball["xvel"]
-		ball["y"] += ball["yvel"]
 
-		# bat collision
-		if (abs(ball["y"] - bat["y"]) < (bat["height"] + ball["r"])) and (abs(ball["x"] - bat["x"]) < (bat["width"] + ball["r"])):
-			ball["xvel"] *= -1
+		# bat_l collision
+		#if (abs(ball["y"] - bat_l["y"]) < (bat_l["height"] + ball["r"])) and (abs(ball["x"] - bat_l["x"]) < (bat_l["width"] + ball["r"])):
+		#	ball["xvel"] *= -1
 
 		# wall collision
-		if (ball["xvel"] > 0 and ball["x"] + ball["r"] >= WIDTH):
-			ball["xvel"] *= -1
-		if (ball["yvel"] > 0 and ball["y"] + ball["r"] >= HEIGHT) or (ball["yvel"] < 0 and ball["y"] <= 0):
+		x2 = ball["x"] + ball["xvel"]
+		y2 = ball["y"] + ball["yvel"]
+		
+		if x2 < 0:
+			yint = -(ball["yvel"]/ball["xvel"]) * ball["x"] + ball["y"]
+			if bat_l["y"] - bat_l["height"] < yint < bat_l["y"] + bat_l["height"]: # bounce
+				x2 = -x2
+				ball["xvel"] *= -1
+			else: # don't bounce
+				deleted.append(ball)
+		elif x2 > WIDTH:
+			yint = (ball["yvel"]/-ball["xvel"]) * (WIDTH - ball["x"]) + ball["y"]
+			if bat_r["y"] - bat_r["height"] < yint < bat_r["y"] + bat_r["height"]: # bounce
+				x2 = WIDTH - (x2-WIDTH)
+				ball["xvel"] *= -1
+			else: # don't bounce
+				deleted.append(ball)
+		if y2 < 0 or y2 > HEIGHT:
 			ball["yvel"] *= -1
-
-		if ball["x"] - ball["r"] < 0:
-			deleted.append(ball)
+		
+		ball["x"] = x2
+		ball["y"] = y2
 
 	for ball in deleted:
 		balls.remove(ball)
 
 def render():
 	screen.fill((0, 0, 0)) # clear the screen with black
-	pygame.draw.rect(screen, bat["color"], (bat["x"]-bat["width"], bat["y"]-bat["height"], bat["width"]*2, bat["height"]*2), 0)
+	pygame.draw.rect(screen, bat_l["color"], (bat_l["x"]-bat_l["width"], bat_l["y"]-bat_l["height"], bat_l["width"]*2, bat_l["height"]*2), 0)
+	pygame.draw.rect(screen, bat_r["color"], (bat_r["x"]-bat_r["width"], bat_r["y"]-bat_r["height"], bat_r["width"]*2, bat_r["height"]*2), 0)
 
 	for ball in balls:
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
