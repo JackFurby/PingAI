@@ -36,7 +36,6 @@ bat_r = bat_l.copy()
 bat_r["x"] = WIDTH - bat_r["x"]
 
 bat_l["conn"], bat_l["addr"] = s.accept()
-bat_l["conn"].setblocking(False)
 print("Left player connected from {}".format(bat_l["addr"]))
 
 bat_r["conn"], bat_r["addr"] = s.accept()
@@ -44,6 +43,9 @@ bat_r["conn"].setblocking(False)
 print("Right player connected from {}".format(bat_r["addr"]))
 
 def update():
+	bat_l["conn"].setblocking(False)
+	bat_r["conn"].setblocking(False)
+	
 	try:
 		while True:
 			bat_l["input"] = bat_l["conn"].recv(1).decode()
@@ -55,6 +57,9 @@ def update():
 			bat_r["input"] = bat_r["conn"].recv(1).decode()
 	except:
 		pass
+	
+	bat_l["conn"].setblocking(True)
+	bat_r["conn"].setblocking(True)
 	
 	if bat_l["input"] == "D" and bat_l["y"] < HEIGHT - bat_l["height"]:
 		bat_l["y"] += bat_l["speed"]
