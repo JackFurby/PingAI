@@ -18,7 +18,7 @@ for _ in range(20):
 		"y": random.randrange(0, HEIGHT),
 		"xvel": 10 * (random.randrange(0, 2)-0.5),
 		"yvel": 10 * (random.randrange(0, 2)-0.5),
-		"r": 10,
+		"r": 10, #radius of ball
 		"color": (random.randrange(0, 0xFF), random.randrange(0, 0xFF), random.randrange(0, 0xFF))
 	}
 	balls.append(ball)
@@ -32,41 +32,42 @@ bat = {
 	"speed": 8
 }
 
+
 def update():
 	keys = pygame.key.get_pressed()
 	if keys[K_DOWN] and bat["y"] < HEIGHT - bat["height"]:
 		bat["y"] += bat["speed"]
 	if keys[K_UP] and bat["y"] > bat["height"]:
 		bat["y"] -= bat["speed"]
-	
+
 	deleted  = []
 	for ball in balls:
 		ball["x"] += ball["xvel"]
 		ball["y"] += ball["yvel"]
-		
+
 		# bat collision
 		if (abs(ball["y"] - bat["y"]) < (bat["height"] + ball["r"])) and (abs(ball["x"] - bat["x"]) < (bat["width"] + ball["r"])):
 			ball["xvel"] *= -1
-		
+
 		# wall collision
-		if (ball["xvel"] > 0 and ball["x"] + ball["r"] > WIDTH) or (ball["xvel"] < 0 and ball["x"] - ball["r"] < 0):
+		if (ball["xvel"] > 0 and ball["x"] + ball["r"] >= WIDTH):
 			ball["xvel"] *= -1
-		if (ball["yvel"] > 0 and ball["y"] + ball["r"] > HEIGHT) or (ball["yvel"] < 0 and ball["y"] - ball["r"] < 0):
+		if (ball["yvel"] > 0 and ball["y"] + ball["r"] >= HEIGHT) or (ball["yvel"] < 0 and ball["y"] <= 0):
 			ball["yvel"] *= -1
-		
+
 		if ball["x"] - ball["r"] < 0:
 			deleted.append(ball)
-	
+
 	for ball in deleted:
 		balls.remove(ball)
-	
+
 def render():
 	screen.fill((0, 0, 0)) # clear the screen with black
 	pygame.draw.rect(screen, bat["color"], (bat["x"]-bat["width"], bat["y"]-bat["height"], bat["width"]*2, bat["height"]*2), 0)
-	
+
 	for ball in balls:
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
-	
+
 	pygame.display.update()
 
 while True:
@@ -74,8 +75,8 @@ while True:
 		if event.type == QUIT:
 			pygame.quit()
 			sys.exit()
-	
+
 	update()
 	render()
-	
+
 	clock.tick(60)
