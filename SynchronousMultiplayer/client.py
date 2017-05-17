@@ -18,9 +18,20 @@ pygame.display.set_caption("PongAI")
 white = (255, 255, 255)
 myfont = pygame.font.SysFont("monospace", 32)
 
-ball = {}
-bat_l = {}
-bat_r = {}
+ball = {
+	"r": 10, #radius of ball
+	"color": white
+}
+
+bat_l = {
+	"x": 5,
+	"height": 40,
+	"width": 5,
+	"score": 0
+}
+
+bat_r = bat_l.copy()
+bat_r["x"] = WIDTH - bat_r["x"]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((sys.argv[1], TCP_PORT))
@@ -36,15 +47,11 @@ def update():
 		s.send(b"U")
 	else: 
 		s.send(b" ")
-
-
-	state = sfile.readline()
-	bat_l, bat_r, ball = json.loads(state) 
-
-	return bat_l, bat_r, ball
 	
+	state = sfile.readline()
+	bat_l["y"], bat_r["y"], ball["x"], ball["y"] = json.loads(state) 
 
-def render(bat_l, bat_r, ball):
+def render():
 	screen.fill((0, 0, 0)) # clear the screen with black
 	pygame.draw.rect(screen, white, (bat_l["x"]-bat_l["width"], bat_l["y"]-bat_l["height"], bat_l["width"]*2, bat_l["height"]*2), 0)
 	pygame.draw.rect(screen, white, (bat_r["x"]-bat_r["width"], bat_r["y"]-bat_r["height"], bat_r["width"]*2, bat_r["height"]*2), 0)
@@ -63,5 +70,5 @@ while True:
 			pygame.quit()
 			sys.exit()
 
-	bat_l, bat_r, ball = update()
-	render(bat_l, bat_r, ball)
+	update()
+	render()
