@@ -57,7 +57,7 @@ def update():
 	else: 
 		s.send(b" ")
 	
-	state = sock_readline(s).decode()
+	state = sock_readline(s)
 	bat_l["y"], bat_r["y"], ball["x"], ball["y"], score = json.loads(state) 
 
 def render():
