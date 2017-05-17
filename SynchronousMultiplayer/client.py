@@ -36,7 +36,7 @@ bat_r["x"] = WIDTH - bat_r["x"]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((sys.argv[1], TCP_PORT))
-sfile = s.makefile()
+sfile = s.makefile(mode="b", buffering=False)
 
 
 def update():
@@ -49,7 +49,7 @@ def update():
 	else: 
 		s.send(b" ")
 	
-	state = sfile.readline()
+	state = sfile.readline().decode()
 	bat_l["y"], bat_r["y"], ball["x"], ball["y"], score = json.loads(state) 
 
 def render():
