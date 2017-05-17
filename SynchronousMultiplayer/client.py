@@ -37,8 +37,15 @@ bat_r["x"] = WIDTH - bat_r["x"]
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 s.connect((sys.argv[1], TCP_PORT))
-sfile = s.makefile(mode="b", buffering=False)
 
+def sock_readline(sock): # probably inefficient
+	line = b""
+	while True:
+		char = sock.recv(1)
+		if char == b"\n":
+			break
+		line += char
+	return line.decode()
 
 def update():
 	keys = pygame.key.get_pressed()
@@ -50,7 +57,7 @@ def update():
 	else: 
 		s.send(b" ")
 	
-	state = sfile.readline().decode()
+	state = sock_readline(s).decode()
 	bat_l["y"], bat_r["y"], ball["x"], ball["y"], score = json.loads(state) 
 
 def render():
