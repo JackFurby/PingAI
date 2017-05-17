@@ -114,9 +114,7 @@ while True:
 	if bat_l["score"] >= 5 or bat_r["score"] >= 5:
 		break
 	
-	state = [bat_l.copy(), bat_r.copy(), ball]
-	del state[0]["conn"]
-	del state[1]["conn"]
+	state = [bat_l["y"], bat_r["y"], ball["x"], ball["y"]]
 	state = ( json.dumps(state) + "\n" ).encode()
 	bat_l["conn"].send(state)
 	bat_r["conn"].send(state)
