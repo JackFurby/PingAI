@@ -35,6 +35,7 @@ bat_r = bat_l.copy()
 bat_r["x"] = WIDTH - bat_r["x"]
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 s.connect((sys.argv[1], TCP_PORT))
 sfile = s.makefile(mode="b", buffering=False)
 
