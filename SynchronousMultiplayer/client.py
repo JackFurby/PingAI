@@ -27,8 +27,9 @@ bat_l = {
 	"x": 5,
 	"height": 40,
 	"width": 5,
-	"score": 0
 }
+
+score = "0:0"
 
 bat_r = bat_l.copy()
 bat_r["x"] = WIDTH - bat_r["x"]
@@ -49,7 +50,7 @@ def update():
 		s.send(b" ")
 	
 	state = sfile.readline()
-	bat_l["y"], bat_r["y"], ball["x"], ball["y"] = json.loads(state) 
+	bat_l["y"], bat_r["y"], ball["x"], ball["y"], score = json.loads(state) 
 
 def render():
 	screen.fill((0, 0, 0)) # clear the screen with black
@@ -58,8 +59,8 @@ def render():
 
 	pygame.draw.rect(screen, white, (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
 
-	score = myfont.render("{} : {}".format(bat_l["score"], bat_r["score"]) , 1, white)
-	screen.blit(score, (280, 240))
+	scoretxt = myfont.render(score , 1, white)
+	screen.blit(scoretxt, (280, 240))
 	
 
 	pygame.display.update()
