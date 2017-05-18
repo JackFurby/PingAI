@@ -29,6 +29,7 @@ class Game:
 	def __init__(self, agent_a, agent_b, options=None):
 		self.agent_a = agent_a
 		self.agent_b = agent_b
+		self.total_hits = 0
 		
 		self.options = {
 			"final_score": 10,
@@ -69,6 +70,7 @@ class Game:
 			if self.agent_a.bat_y - self.agent_a.bat_height < y2 < self.agent_a.bat_y + self.agent_a.bat_height: # bounce
 				x2 = -x2
 				ball["xvel"] *= -1
+				self.total_hits += 1
 			else: # don't bounce
 				self.agent_b.score += 1
 				x2 = 0.9
@@ -77,6 +79,7 @@ class Game:
 			if self.agent_b.bat_y - self.agent_b.bat_height < y2 < self.agent_b.bat_y + self.agent_b.bat_height: # bounce
 				x2 = 2-x2
 				ball["xvel"] *= -1
+				self.total_hits += 1
 			else: # don't bounce
 				self.agent_a.score += 1
 				x2 = 0.1
@@ -95,6 +98,6 @@ class Game:
 				renderer(self.gamestate, self.agent_a, self.agent_b)
 		
 		if self.agent_a.score > self.agent_b.score:
-			return self.agent_a
+			return self.agent_a, self.total_hits
 		else:
-			return self.agent_b
+			return self.agent_b, self.total_hits
