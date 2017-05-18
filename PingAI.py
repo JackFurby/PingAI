@@ -21,6 +21,8 @@ current_menu = "main" #menu the user is on
 
 rad_btns_stats = {"host":False, "client":True}
 
+key_pressed = 0
+
 
 def button(text, text_type, text_color, background_color, active_color, x, y, action=None): #this makes a btn, code works but needs tidying up
 	mouse = pygame.mouse.get_pos()
@@ -85,7 +87,7 @@ class textarea(object):
 			pygame.draw.rect(screen, self.active_color, (self.x,self.y,self.width,self.height), self.thick)
 			text_list = []
 			for char in self.in_text: #sets max character lengh
-				if len(text_list) <= self.max_char:
+				if len(text_list) < self.max_char:
 					text_list.append(char)
 			starting_text = self.text_type.render("".join(text_list), True, self.text_color)
 			screen.blit(starting_text,(self.x+5, self.y+5))
@@ -95,7 +97,7 @@ class textarea(object):
 		pygame.draw.rect(screen, self.border_color, (self.x,self.y,self.width,self.height), self.thick)
 		text_list = []
 		for char in self.in_text: #sets max character lengh
-			if len(text_list) <= self.max_char:
+			if len(text_list) < self.max_char:
 				text_list.append(char)
 		starting_text = self.text_type.render("".join(text_list), True, self.text_color)
 		screen.blit(starting_text,(self.x+5, self.y+5))
@@ -117,26 +119,26 @@ class textarea(object):
 	def set_active_false(self): #deselects text area
 		self.active = False
 
-	def update_text(self):                         #<-----------slow
+	def update_text(self):
+		global key_pressed
 		text_list = []
 		for char in self.in_text: #sets max character lengh
 			if len(text_list) <= self.max_char:
 				text_list.append(char)
-		while 1:
-			event = pygame.event.poll()
-			if event.type == KEYDOWN:
-				inkey = event.key
-				print(inkey)
-			else:
-				break
-			if inkey == K_BACKSPACE:
+		if event.type == KEYDOWN  and key_pressed == 0:
+			key_pressed = 1
+			print(key_pressed)
+			if event.key == K_BACKSPACE:
 				text_list = text_list[0:-1]
-			elif inkey == K_RETURN:
-				break
-			elif inkey <=127:
-				text_list.append(chr(inkey))
+			elif event.key <=127:
+				text_list.append(chr(event.key))
 			self.in_text = "".join(text_list)
-			print("hi")
+		if event.type == KEYUP:
+			key_pressed = 0
+			print(key_pressed)
+
+	def get_text(self):
+		return self.in_text
 
 def text_area_selection(textarea_in):
 	mouse = pygame.mouse.get_pos()
