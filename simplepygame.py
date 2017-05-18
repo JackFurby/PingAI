@@ -41,7 +41,7 @@ bat_r["x"] = WIDTH - bat_r["x"]
 
 def update():
 	keys = pygame.key.get_pressed()
-	
+
 	if keys[K_s] and bat_l["y"] < HEIGHT - bat_l["height"]:
 		bat_l["y"] += bat_l["speed"]
 	if keys[K_w] and bat_l["y"] > bat_l["height"]:
@@ -61,7 +61,7 @@ def update():
 		# wall collision
 		x2 = ball["x"] + ball["xvel"]
 		y2 = ball["y"] + ball["yvel"]
-		
+
 		if x2 < 0:
 			yint = -(ball["yvel"]/ball["xvel"]) * ball["x"] + ball["y"]
 			if bat_l["y"] - bat_l["height"] < yint < bat_l["y"] + bat_l["height"]: # bounce
@@ -80,7 +80,7 @@ def update():
 				bat_l["score"] += 1
 		if y2 < 0 or y2 > HEIGHT:
 			ball["yvel"] *= -1
-		
+
 		ball["x"] = x2
 		ball["y"] = y2
 
@@ -99,18 +99,24 @@ def render():
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
 
 	score = myfont.render("{} : {}".format(bat_l["score"], bat_r["score"]) , 1, white)
-	screen.blit(score, (260, 240))
-	
+	scoreTextWidth = score.get_rect().width
+	scoreTextHeight = score.get_rect().height
+	screen.blit(score, ((WIDTH / 2.0) - (scoreTextWidth / 2.0),(HEIGHT / 2.0) - (scoreTextHeight / 2.0)))
+
 
 	pygame.display.update()
 
-while True:
-	for event in pygame.event.get():
-		if event.type == QUIT:
-			pygame.quit()
-			sys.exit()
+def mainLoop():
+	while True:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
 
-	update()
-	render()
+		update()
+		render()
 
-	clock.tick(60)
+		clock.tick(60)
+
+if __name__ == "__main__":
+	mainLoop()
