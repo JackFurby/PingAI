@@ -31,8 +31,9 @@ bat_l = {
 	"width": 5, # actually, half the width and height
 	"height": 50,
 	"color": white,
-	"speed": 8,
-	"score": 0
+	"speed": 8, #speed the bat can move
+	"score": 0,
+	"absSpeed":0 #speed the bat is moving, + value means moving down - if moving up
 }
 
 bat_r = bat_l.copy()
@@ -44,13 +45,21 @@ def update():
 
 	if keys[K_s] and bat_l["y"] < HEIGHT - bat_l["height"]:
 		bat_l["y"] += bat_l["speed"]
-	if keys[K_w] and bat_l["y"] > bat_l["height"]:
+		bat_l["absSpeed"] = 4
+	elif keys[K_w] and bat_l["y"] > bat_l["height"]:
 		bat_l["y"] -= bat_l["speed"]
+		bat_l["absSpeed"] = -4
+	else:
+		bat_l["absSpeed"] = 0
 
 	if keys[K_DOWN] and bat_r["y"] < HEIGHT - bat_r["height"]:
 		bat_r["y"] += bat_r["speed"]
-	if keys[K_UP] and bat_r["y"] > bat_r["height"]:
+		bat_r["absSpeed"] = 4
+	elif keys[K_UP] and bat_r["y"] > bat_r["height"]:
 		bat_r["y"] -= bat_r["speed"]
+		bat_r["absSpeed"] = -4
+	else:
+		bat_r["absSpeed"] = 0
 	deleted  = []
 	for ball in balls:
 
@@ -67,6 +76,7 @@ def update():
 			if bat_l["y"] - bat_l["height"] < yint < bat_l["y"] + bat_l["height"]: # bounce
 				x2 = -x2
 				ball["xvel"] *= -1
+				ball["yvel"] += bat_l["absSpeed"]
 			else: # don't bounce
 				deleted.append(ball)
 				bat_r["score"] += 1
@@ -75,6 +85,7 @@ def update():
 			if bat_r["y"] - bat_r["height"] < yint < bat_r["y"] + bat_r["height"]: # bounce
 				x2 = WIDTH - (x2-WIDTH)
 				ball["xvel"] *= -1
+				ball["yvel"] += bat_r["absSpeed"]
 			else: # don't bounce
 				deleted.append(ball)
 				bat_l["score"] += 1
@@ -99,9 +110,9 @@ def render():
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
 
 	score = myfont.render("{} : {}".format(bat_l["score"], bat_r["score"]) , 1, white)
-	scoreTextWidth = score.get_rect().width
-	scoreTextHeight = score.get_rect().height
 	screen.blit(score, ((WIDTH / 2.0) - (scoreTextWidth / 2.0),(HEIGHT / 2.0) - (scoreTextHeight / 2.0)))
+	scoreTextHeight = score.get_rect().height
+	scoreTextWidth = score.get_rect().width
 
 
 	pygame.display.update()
