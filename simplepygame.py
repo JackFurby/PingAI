@@ -110,9 +110,9 @@ def render():
 		pygame.draw.rect(screen, ball["color"], (ball["x"]-ball["r"], ball["y"]-ball["r"], ball["r"]*2, ball["r"]*2), 0)
 
 	score = myfont.render("{} : {}".format(bat_l["score"], bat_r["score"]) , 1, white)
-	screen.blit(score, ((WIDTH / 2.0) - (scoreTextWidth / 2.0),(HEIGHT / 2.0) - (scoreTextHeight / 2.0)))
 	scoreTextHeight = score.get_rect().height
 	scoreTextWidth = score.get_rect().width
+	screen.blit(score, ((WIDTH / 2.0) - (scoreTextWidth / 2.0),(HEIGHT / 2.0) - (scoreTextHeight / 2.0)))
 
 
 	pygame.display.update()
