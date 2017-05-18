@@ -1,4 +1,6 @@
 import pygame, simplepygame, sys, socket
+sys.path.insert(0, 'api/')
+import apitest
 from pygame.locals import *
 
 WIDTH = 640
@@ -34,7 +36,7 @@ def button(text, text_type, text_color, background_color, active_color, x, y, ac
 		button_object = text_type.render(text, True, active_color, background_color)
 		if click[0] == 1 and action != None: #check for button press
 			if action == "singleplayer":
-				simplepygame.mainLoop()
+				apitest.spec()
 			elif action == "multiplayer":
 				global current_menu
 				current_menu = "multi"
@@ -127,7 +129,6 @@ class textarea(object):
 				text_list.append(char)
 		if event.type == KEYDOWN  and key_pressed == 0:
 			key_pressed = 1
-			print(key_pressed)
 			if event.key == K_BACKSPACE:
 				text_list = text_list[0:-1]
 			elif event.key <=127:
@@ -135,7 +136,6 @@ class textarea(object):
 			self.in_text = "".join(text_list)
 		if event.type == KEYUP:
 			key_pressed = 0
-			print(key_pressed)
 
 	def get_text(self):
 		return self.in_text
@@ -209,9 +209,9 @@ def multiplayer_menu():
 	rad_btn(white, red, grey, 350, 150, "client")
 
 	#textareas
-	text_area_selection(textareas[0])
+	text_area_selection(textareas[0]) #allows textarea to render
 	text_area_selection(textareas[1])
-	if textareas[0].get_state():
+	if textareas[0].get_state(): #allows text update when textarea is selected
 		textareas[0].update_text()
 	elif textareas[1].get_state():
 		textareas[1].update_text()
