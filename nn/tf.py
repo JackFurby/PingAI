@@ -1,6 +1,8 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data #test dataset
 
+#code from: https://pythonprogramming.net
+
 '''
 tensor input (this is the data being used), add game data in tensor form here
 (a tensor is simmalar to a array), use a ML algorithm to put game data into
@@ -48,26 +50,27 @@ def neural_network_model(data):
     output = tf.matmul(l3, output_layer['weights']) + output_layer['biases'] #(layer 3 * weights) + biases
     return output #network output (model is done)
 
-def train_neural_network(in_data):
+def train_neural_network(in_data): #data passed through this will go through the neural network
     prediction = neural_network_model(in_data)
-    cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y) )
-    optimizer = tf.train.AdamOptimizer().minimize(cost) #default learning rate = 0.01
+    cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y)) #mesures how wrong the prediction is (smaller the better)
+    #optimizer uses AdamOptimizer to optimize cost by changing weights
+    optimizer = tf.train.AdamOptimizer().minimize(cost) #default learning rate = 0.001
 
     hm_epochs = 10 #how many cycles of feeding forward and back propagation
 
-    with tf.Session() as sess: #launches the model
-        sess.run(tf.global_variables_initializer()) #init opperation
+    with tf.Session() as sess: #launches the model, opens session and closes when down
+        sess.run(tf.global_variables_initializer()) #init opperation, initialize all variables
 
-        for epoch in range(hm_epochs):
+        for epoch in range(hm_epochs): #for each epoch
             epoch_loss = 0
-            for _ in range(int(mnist.train.num_examples / batch_size)):
+            for _ in range(int(mnist.train.num_examples / batch_size)): #for each batch
                 epoch_x, epoch_y = mnist.train.next_batch(batch_size)
-                _, c = sess.run([optimizer, cost], feed_dict = {x: epoch_x, y: epoch_y}) #c = cost (how wrong the result is)
-                epoch_loss += c
+                _, c = sess.run([optimizer, cost], feed_dict = {x: epoch_x, y: epoch_y}) #c = cost (how wrong the result is), run optimizer and cost against our batch of data
+                epoch_loss += c #keeps track of cost, add up total cost for each batch
             print('Epoc', epoch, 'completed out of', hm_epochs, 'loss:', epoch_loss)
 
-        correct  = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1)) #return max values in arrays
-        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+        correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1)) #how many predictions were correct
+        accuracy = tf.reduce_mean(tf.cast(correct, 'float')) #how accurate the model is
         print('Accuiracy:', accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))
 
 train_neural_network(x)
