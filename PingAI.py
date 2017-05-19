@@ -69,7 +69,7 @@ def rad_btn(border_color, active_color, hover_color, x, y, action=None, width=25
 
 class textarea(object):
 
-	def __init__(self, border_color=grey, active_color=red, box_color=white, text_color=black, x=0, y=0, max_char=10, text_type=small_font, in_text="example", height=25, thick=3):
+	def __init__(self, border_color=grey, active_color=red, box_color=white, text_color=black, x=0, y=0, max_char=10, text_type=small_font, in_text="example", width=150, height=25, thick=3):
 		self.border_color = border_color
 		self.active_color = active_color
 		self.box_color = box_color
@@ -79,7 +79,7 @@ class textarea(object):
 		self.max_char = max_char
 		self.text_type = text_type
 		self.in_text = in_text
-		self.width = max_char*15
+		self.width = width
 		self.height = height
 		self.thick = thick
 		self.active = False
@@ -92,7 +92,7 @@ class textarea(object):
 				if len(text_list) < self.max_char:
 					text_list.append(char)
 			starting_text = self.text_type.render("".join(text_list), True, self.text_color)
-			screen.blit(starting_text,(self.x+5, self.y+5))
+			screen.blit(starting_text,(self.x+3, self.y+3))
 
 	def textarea(self): #un selected textarea
 		pygame.draw.rect(screen, self.box_color, (self.x,self.y,self.width,self.height))
@@ -102,7 +102,7 @@ class textarea(object):
 			if len(text_list) < self.max_char:
 				text_list.append(char)
 		starting_text = self.text_type.render("".join(text_list), True, self.text_color)
-		screen.blit(starting_text,(self.x+5, self.y+5))
+		screen.blit(starting_text,(self.x+3, self.y+3))
 
 	def get_pos(self): #returns x and y
 		return (self.x, self.y)
@@ -157,8 +157,8 @@ def text_area_selection(textarea_in):
 		textarea_in.textarea()
 
 #textareas for use in menus
-connect_ip = textarea(grey, red, white, black, 350, 210, 15, small_font, "IP address", 25, 3)
-host_games = textarea(grey, red, white, black, 230, 210, 3, small_font, "10", 25, 3)
+connect_ip = textarea(grey, red, white, black, 350, 210, 15, small_font, "IP address", 180, 25, 3)
+host_games = textarea(grey, red, white, black, 230, 210, 3, small_font, "10", 50, 25, 3)
 
 textareas = [connect_ip, host_games]
 
