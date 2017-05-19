@@ -32,17 +32,17 @@ class Game:
 		self.total_hits = 0
 		
 		self.options = {
-			"final_score": 10,
+			"final_score": 7,
 			"bat_speed": 0.006,
 			"ball_speed": 0.015
 		}
 		
 		self.gamestate = {
 			"ball": {
-				"x": 0.5,
+				"x": 0.1,
 				"y": 0.5,
-				"xvel": self.options["ball_speed"] * (random.randrange(0, 2)-0.5),
-				"yvel": self.options["ball_speed"] * (random.randrange(0, 2)-0.5) * 1.1,
+				"xvel": self.options["ball_speed"] * 0.4,
+				"yvel": self.options["ball_speed"] * (random.randrange(0, 2)-0.5),
 			}
 		}
 	
@@ -67,22 +67,22 @@ class Game:
 		y2 = ball["y"] + ball["yvel"]
 		
 		if x2 < 0:
+			ball["xvel"] *= -1
 			if self.agent_a.bat_y - self.agent_a.bat_height < y2 < self.agent_a.bat_y + self.agent_a.bat_height: # bounce
 				x2 = -x2
-				ball["xvel"] *= -1
 				self.total_hits += 1
 			else: # don't bounce
 				self.agent_b.score += 1
-				x2 = 0.9
+				x2 = 0.1
 				y2 = self.agent_b.bat_y
 		elif x2 > 1:
+			ball["xvel"] *= -1
 			if self.agent_b.bat_y - self.agent_b.bat_height < y2 < self.agent_b.bat_y + self.agent_b.bat_height: # bounce
 				x2 = 2-x2
-				ball["xvel"] *= -1
 				self.total_hits += 1
 			else: # don't bounce
 				self.agent_a.score += 1
-				x2 = 0.1
+				x2 = 0.9
 				y2 = self.agent_a.bat_y
 		if y2 < 0 or y2 > 1:
 			ball["yvel"] *= -1

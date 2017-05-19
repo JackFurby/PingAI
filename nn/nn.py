@@ -11,7 +11,7 @@ class NeuralNetwork(object):
 		for layer_weights in self.weights:
 			layer_values = layer_values * layer_weights
 			layer_values = scipy.special.expit(layer_values)
-		return layer_values
+		return np.asarray(layer_values)[0]
 	
 	def mutate(self, factor):
 		mutation = np.vectorize(lambda x: x * random.uniform(1 - factor, 1 + factor))
