@@ -21,9 +21,7 @@ small_font = pygame.font.Font('freesansbold.ttf', 20) #font for small text
 
 current_menu = "main" #menu the user is on
 
-rad_btns_stats = {"host":False, "client":True}
-
-key_pressed = 0
+key_pressed = 0 #ensures multiple click events don't occur in a single click for textareas
 
 
 def button(text, text_type, text_color, background_color, active_color, x, y, action=None): #this makes a btn, code works but needs tidying up
@@ -51,21 +49,34 @@ def button(text, text_type, text_color, background_color, active_color, x, y, ac
 		button_object = text_type.render(text, True, text_color, background_color) #button not presses or hover
 	screen.blit(button_object,(x,y))
 
-def rad_btn(border_color, active_color, hover_color, x, y, action=None, width=25, height=25, thick=3):
+def rad_btn(border_color, active_color, hover_color, x, y, action=None, group={}, width=25, height=25, thick=3):
+	global rad_clicked #ensures multiple click events don't occur in a single click
 	mouse = pygame.mouse.get_pos()
 	click = pygame.mouse.get_pressed()
 	if (x + width > mouse[0] > x) and (y + height > mouse[1] > y): #checks to see if mouse is over btn
-		if click[0] == 1 and action != None: #btn clicked
-			pygame.time.wait(150) #wait stopps multiple clicks
-			global rad_btns_stats
-			if rad_btns_stats[action]: #changes btn status
-				rad_btns_stats[action] = False
+		if click[0] == 1 and action != None and rad_clicked == 0: #btn clicked
+			rad_clicked = 1
+			if group[action]: #changes btn status
+				group[action] = False
 			else:
-				rad_btns_stats[action] = True
-	if rad_btns_stats[action]: #btn selected
+				group[action] = True
+	if group[action]: #btn selected
 		pygame.draw.rect(screen, active_color, (x,y,width,height), thick)
 	else: #btn not selected
 		pygame.draw.rect(screen, border_color, (x,y,width,height), thick)
+	if click[0] == 0:
+		rad_clicked = 0
+
+def text_obj(text, font, color, background_color, x=-1, y=-1, offset_x=0, offset_y=0): #text for menus e.g. titles
+	if x == -1 and y == -1: #text in center of window
+		text = font.render(text, True, color, background_color)
+		text_width = text.get_rect().width
+		text_height = text.get_rect().height
+		screen.blit(text,((WIDTH / 2.0) - (text_width / 2.0) + offset_x,(HEIGHT / 2.0) - (text_height / 2.0) + offset_y))
+	else: #text top right in position of x and y
+		text = font.render(text, True, color, background_color)
+		screen.blit(text,(x, y))
+
 
 class textarea(object):
 
@@ -134,27 +145,27 @@ class textarea(object):
 			elif event.key <=127:
 				text_list.append(chr(event.key))
 			self.in_text = "".join(text_list)
-		if event.type == KEYUP:
+		elif event.type == KEYUP:
 			key_pressed = 0
 
 	def get_text(self):
 		return self.in_text
 
-def text_area_selection(textarea_in):
-	mouse = pygame.mouse.get_pos()
-	click = pygame.mouse.get_pressed()
-	width, height = textarea_in.get_dim() #gets width and height for textarea
-	x, y = textarea_in.get_pos() #gets x and y for textarea
-	if (x + width > mouse[0] > x) and (y + height > mouse[1] > y): #checks to see if mouse is over textarea
-		if click[0] == 1: #textarea selected
-			#pygame.time.wait(150) #wait stops multiple clicks
-			textarea_in.set_active(textareas)
-	elif click[0] == 1: #textarea not selected
-		textarea_in.set_active_false()
-	if textarea_in.get_state() == True:
-		textarea_in.active_textarea()
-	else:
-		textarea_in.textarea()
+	def text_area_selection(self):
+		mouse = pygame.mouse.get_pos()
+		click = pygame.mouse.get_pressed()
+		width, height = self.get_dim() #gets width and height for textarea
+		x, y = self.get_pos() #gets x and y for textarea
+		if (x + width > mouse[0] > x) and (y + height > mouse[1] > y): #checks to see if mouse is over textarea
+			if click[0] == 1: #textarea selected
+				#pygame.time.wait(150) #wait stops multiple clicks
+				self.set_active(textareas)
+		elif click[0] == 1: #textarea not selected
+			self.set_active_false()
+		if self.get_state() == True:
+			self.active_textarea()
+		else:
+			self.textarea()
 
 #textareas for use in menus
 connect_ip = textarea(grey, red, white, black, 350, 210, 15, small_font, "IP address", 180, 25, 3)
@@ -162,12 +173,13 @@ host_games = textarea(grey, red, white, black, 230, 210, 3, small_font, "10", 50
 
 textareas = [connect_ip, host_games]
 
+#radio button groups
+global rad_btns_stats
+rad_btns_stats = {"host":False, "client":True}
+
 def main_menu():
 	#setting and position of title
-	title_text = large_font.render('PingAI', True, white, black)
-	title_text_width = title_text.get_rect().width
-	title_text_height = title_text.get_rect().height
-	screen.blit(title_text,((WIDTH / 2.0) - (title_text_width / 2.0),(HEIGHT / 2.0) - (title_text_height / 2.0)))
+	title_text = text_obj("PingAI", large_font, white, black, -1, -1)
 
 	#buttons
 	button('Single player', med_font, white, black, red, 150, 300, "singleplayer")
@@ -178,26 +190,13 @@ def main_menu():
 def multiplayer_menu():
 	current_menu = "multi"
 
-	#setting and position of title and text
-	title_text = large_font.render("Multiplayer", True, white, black)
-	title_text_width = title_text.get_rect().width
-	title_text_height = title_text.get_rect().height
-	screen.blit(title_text,((WIDTH / 2.0) - (title_text_width / 2.0),(HEIGHT / 2.0) - (title_text_height / 2.0) - 150))
-
-	host_text = small_font.render("Host", True, white, black)
-	screen.blit(host_text,(80, 155))
-
-	client_text = small_font.render("Client", True, white, black)
-	screen.blit(client_text,(385, 155))
-
-	ip_address_text = small_font.render("IP address: {}".format(socket.gethostbyname(socket.gethostname())), True, white, black)
-	screen.blit(ip_address_text,(45, 185))
-
-	ip_address_text = small_font.render("number of games:", True, white, black)
-	screen.blit(ip_address_text,(45, 215))
-
-	ip_address_text = small_font.render("Connect to:", True, white, black)
-	screen.blit(ip_address_text,(350, 185))
+	#text for menu
+	title_text = text_obj("Multiplayer", large_font, white, black, -1, -1, 0, -150)
+	host_text = text_obj("Host", small_font, white, black, 80, 155)
+	client_text = text_obj("Client", small_font, white, black, 385, 155)
+	ip_address_text = text_obj("IP address: {}".format(socket.gethostbyname(socket.gethostname())), small_font, white, black, 45, 185)
+	game_number_text = text_obj("number of games:", small_font, white, black, 45, 215)
+	connect_to_text = text_obj("Connect to:", small_font, white, black, 350, 185)
 
 	#buttons
 	button('Main menu', med_font, white, black, red, 45, 430, "main")
@@ -205,29 +204,25 @@ def multiplayer_menu():
 	button("Play", med_font, white, black, red, 560, 360, "play")
 
 	#radio buttons
-	rad_btn(white, red, grey, 45, 150, "host")
-	rad_btn(white, red, grey, 350, 150, "client")
+	rad_btn(white, red, grey, 45, 150, "host", rad_btns_stats)
+	rad_btn(white, red, grey, 350, 150, "client", rad_btns_stats)
 
 	#textareas
-	text_area_selection(textareas[0]) #allows textarea to render
-	text_area_selection(textareas[1])
+	textareas[0].text_area_selection() #allows textarea to render
+	textareas[1].text_area_selection()
 	if textareas[0].get_state(): #allows text update when textarea is selected
 		textareas[0].update_text()
 	elif textareas[1].get_state():
 		textareas[1].update_text()
 
 
-def updateTitle():
+def updateMenu():
 	keys = pygame.key.get_pressed()
-
 	screen.fill((0, 0, 0)) # clear the screen with black
-
 	if current_menu == "main":
 		main_menu()
 	elif current_menu == "multi":
 		multiplayer_menu()
-
-
 	pygame.display.update()
 
 while True:
@@ -235,7 +230,5 @@ while True:
 		if event.type == QUIT:
 			pygame.quit()
 			sys.exit()
-
-	updateTitle()
-
+	updateMenu()
 	clock.tick(30)
