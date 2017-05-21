@@ -33,13 +33,12 @@ def button(text, text_type, text_color, background_color, active_color, x, y, ac
 	if (x + button_width > mouse[0] > x) and (y + button_height > mouse[1] > y): #checks to see if mouse is over text
 		button_object = text_type.render(text, True, active_color, background_color)
 		if click[0] == 1 and action != None: #check for button press
+			global current_menu
 			if action == "singleplayer":
 				apitest.spec()
 			elif action == "multiplayer":
-				global current_menu
 				current_menu = "multi"
 			elif action == "main":
-				global current_menu
 				current_menu = "main"
 			elif action == "exit":
 				sys.exit()
@@ -168,7 +167,7 @@ class textarea(object):
 			self.textarea()
 
 #textareas for use in menus
-connect_ip = textarea(grey, red, white, black, 350, 210, 15, small_font, "IP address", 180, 25, 3)
+connect_ip = textarea(grey, red, white, black, 45, 325, 45, small_font, "IP address", 550, 25, 3)
 host_games = textarea(grey, red, white, black, 230, 210, 3, small_font, "10", 50, 25, 3)
 
 textareas = [connect_ip, host_games]
@@ -193,10 +192,10 @@ def multiplayer_menu():
 	#text for menu
 	title_text = text_obj("Multiplayer", large_font, white, black, -1, -1, 0, -150)
 	host_text = text_obj("Host", small_font, white, black, 80, 155)
-	client_text = text_obj("Client", small_font, white, black, 385, 155)
+	client_text = text_obj("Client", small_font, white, black, 80, 270)
 	ip_address_text = text_obj("IP address: {}".format(socket.gethostbyname(socket.gethostname())), small_font, white, black, 45, 185)
 	game_number_text = text_obj("number of games:", small_font, white, black, 45, 215)
-	connect_to_text = text_obj("Connect to:", small_font, white, black, 350, 185)
+	connect_to_text = text_obj("Connect to:", small_font, white, black, 45, 300)
 
 	#buttons
 	button('Main menu', med_font, white, black, red, 45, 430, "main")
@@ -205,7 +204,7 @@ def multiplayer_menu():
 
 	#radio buttons
 	rad_btn(white, red, grey, 45, 150, "host", rad_btns_stats)
-	rad_btn(white, red, grey, 350, 150, "client", rad_btns_stats)
+	rad_btn(white, red, grey, 45, 265, "client", rad_btns_stats)
 
 	#textareas
 	textareas[0].text_area_selection() #allows textarea to render
