@@ -1,7 +1,10 @@
 import pygame, sys
 from pygame.locals import *
 
-import api
+import api, cv2, os
+import pyscreenshot as ImageGrab
+import numpy as np
+
 
 
 class KeyboardAgent(api.Agent):
@@ -53,17 +56,39 @@ def pygame_render(gamestate, agent_a, agent_b):
 	#takes screenshot and key input
 	global run_number
 	global key_record
+	global training_output
+	global file_name
 	run_number += 1
-	if run_number % 30 == 0: #only take record every half a second
-		pygame.image.save(screen, "/Users/jack/Documents/programming/pingAILearning/pic/screenshot" + str(run_number) + ".png")
-		keys = pygame.key.get_pressed()
-		if keys[K_w]:
-			key_record.append([1,0,0])
-		elif keys[K_s]:
-			key_record.append([0,1,0])
-		else:
-			key_record.append([0,0,1])
+	if run_number % 10 == 0: #only take record every half a second
 
+
+
+		pygame.image.save(screen, "/Users/jack/Documents/programming/pingAILearning/pic/screenshot" + str(run_number) + ".png")
+
+
+		screen_save = cv2.imread("/Users/jack/Documents/programming/pingAILearning/pic/screenshot" + str(run_number) + ".png",0)
+		#screen_save = np.fromstring(pygame.image.tostring(screen, "RGB"), dtype='uint8')
+		#screen_save = ImageGrab.grab(bbox=(0,40,WIDTH,HEIGHT)) # X1,Y1,X2,Y2
+		#screen_save = cv2.cvtColor(screen_save,cv2.COLOR_BGR2GRAY)
+		screen_save = cv2.resize(screen_save, (100, 100))
+
+
+		keys = pygame.key.get_pressed()
+		pressed_key = [0,0,0]
+		if keys[K_w]:
+			pressed_key = [1,0,0]
+			key_record.append(pressed_key)
+		elif keys[K_s]:
+			pressed_key = [0,1,0]
+			key_record.append(pressed_key)
+		else:
+			pressed_key = [0,0,1]
+			key_record.append(pressed_key)
+		training_output.append([screen_save,pressed_key])
+
+		if len(training_output) % 500 == 0:
+			print(len(training_output))
+			np.save(file_name, training_output)
 
 	clock.tick(60)
 
@@ -77,6 +102,13 @@ def spec():
 
 	global run_number
 	global key_record
+	global training_output
+	global file_name
+	file_name = '/Users/jack/Documents/programming/pingAILearning/training_output.npy'
+	if os.path.isfile(file_name):
+		training_output = list(np.load(file_name))
+	else:
+		training_output = []
 
 	WIDTH = 640
 	HEIGHT = 480
@@ -85,6 +117,7 @@ def spec():
 
 	run_number = 0
 	key_record = []
+	training_output = []
 
 	screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 	pygame.display.set_caption("PongAI")
